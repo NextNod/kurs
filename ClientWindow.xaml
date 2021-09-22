@@ -1,0 +1,25 @@
+﻿<Window x:Class="kurs.ClientWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:Syncfusion="http://schemas.syncfusion.com/wpf"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+        xmlns:local="clr-namespace:kurs"
+        mc:Ignorable="d"
+        Title="Client" Height="450" Width="800">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="50"/>
+            <RowDefinition/>
+            <RowDefinition Height="auto"/>
+        </Grid.RowDefinitions>
+        <Syncfusion:SfStepProgressBar x:Name="StepBar" Width="300" HorizontalAlignment="Center"/>
+        <Frame Grid.Row="1" x:Name="FieldForPages" NavigationUIVisibility="Hidden" Margin="0 10 0 0"/>
+        <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Center">
+            <Button x:Name="Back" Content="Back" Margin="10" Width="100" IsEnabled="False" Click="Back_Click"/>
+            <Button x:Name="Next" Content="Next" Margin="10" Width="100" Click="Button_Click"/>
+        </StackPanel>
+        <materialDesign:Snackbar x:Name="snackbar" Grid.Row="2"/>
+    </Grid>
+</Window>

@@ -1,0 +1,23 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net6.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <UseWPF>true</UseWPF>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="MaterialDesignThemes" Version="4.1.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="5.0.10" />
+    <PackageReference Include="Syncfusion.SfProgressBar.WPF" Version="19.2.0.62" />
+    <PackageReference Include="Syncfusion.SfSkinManager.WPF" Version="19.2.0.62" />
+    <PackageReference Include="Syncfusion.Themes.MaterialLight.WPF" Version="19.2.0.62" />
+    <PackageReference Include="Syncfusion.Tools.WPF" Version="19.2.0.62" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
+  </ItemGroup>
+
+</Project>
