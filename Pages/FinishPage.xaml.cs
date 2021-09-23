@@ -12,7 +12,7 @@ namespace kurs.Pages
             InitializeComponent();
 
             Name.Content = ClientWindow.Client.Name;
-            LoginLabel.Content = ClientWindow.Client.Name;
+            LoginLabel.Content = $"Login: {ClientWindow.Client.Name}";
             Phone.Content = ClientWindow.Client.Phone;
             Email.Content = ClientWindow.Client.Email;
 
@@ -35,6 +35,7 @@ namespace kurs.Pages
                 SysAdmin = -1,
                 Password = Password.Text
             });
+
             MainWindow.DataBase.Client.Add(ClientWindow.Client);
             MainWindow.DataBase.SaveChanges();
             MainWindow.DataBase.Order.Add(ClientWindow.Order);
