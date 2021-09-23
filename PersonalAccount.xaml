@@ -27,13 +27,13 @@
                     </Grid.RowDefinitions>
                     <StackPanel Margin="10">
                         <Label Content="Choose service"/>
-                        <ComboBox x:Name="Service"/>
+                        <ComboBox x:Name="Service" SelectionChanged="Service_SelectionChanged"/>
                         <Label Content="Choose workers"/>
-                        <ComboBox x:Name="Workers"/>
+                        <ComboBox x:Name="Workers" SelectionChanged="Workers_SelectionChanged"/>
                         <ListBox x:Name="WorkersList" Margin="0,10,0,0"/>
                     </StackPanel>
                     <StackPanel Grid.Row="1" Margin="10">
-                        <Button Content="Clear workers" IsEnabled="False"/>
+                        <Button Content="Clear workers" IsEnabled="False" x:Name="ClearButton"/>
                         <Button Content="Save selected order" IsEnabled="False" Margin="0,10,0,10"/>
                         <Button Content="Add new order"/>
                     </StackPanel>
