@@ -1,13 +1,49 @@
 ﻿using MaterialDesignThemes.Wpf;
+using Microsoft.Win32;
+using Newtonsoft.Json;
+using OfficeOpenXml;
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Data;
+using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Windows;
 
 namespace kurs
 {
     public partial class AdminPanel : Window
     {
+        class TableOrder 
+        {
+            public int ID { set; get; }
+            public DateTime Finish { set; get; }
+            public string Service { set; get; }
+            public string Client { set; get; }
+            public string Workers { set; get; }
+            public double Cost { set; get; }
+            
+        }
+
+        class TableWorker 
+        {
+            public int ID { set; get; }
+            public string Name { set; get; }
+            public DateTime Birthday { set; get; }
+            public int Expiriance { set; get; }
+            public string Job { set; get; }
+        }
+
+        class TableService 
+        {
+            public int ID { set; get; }
+            public string Name { set; get; }
+            public int Time { set; get; }
+            public string Job { set; get; }
+            public double Cost { set; get; }
+        }
+        
         private readonly string[] allTables = new string[] { "Clients", "Orders", "Workers", "Jobs", "Servises" };
         private ObservableCollection<string> tables;
         private int ID;
@@ -59,25 +95,82 @@ namespace kurs
                     break;
 
                 case "Orders":
-                    DataGrid.ItemsSource = MainWindow.DataBase.Order.Select(x => x).ToList();
-                    if (MainWindow.DataBase.Acc.Where(x => x.ID == ID).Select(x => x.Order).ToArray()[0] == (int)DB.Acsess.Read)
-                        DataGrid.IsReadOnly = true;
-                    else DataGrid.IsReadOnly = false;
-                    break;
+                    {
+                        var sourse = MainWindow.DataBase.Order.ToList();
+                        var orders = new ObservableCollection<TableOrder>();
+
+                        foreach (var item in sourse)
+                        {
+                            string workers = "";
+                            var temp = item.ID_Special.Split(' ');
+
+                            for (int i = 0; i < temp.Length - 1; i++)
+                                workers += MainWindow.DataBase.Special.Where(x => x.ID == Convert.ToInt32(temp[i])).First().Name + ", ";
+
+                            orders.Add(new TableOrder()
+                            {
+                                ID = item.ID,
+                                Finish = item.Order_date.AddDays(item.Total_time),
+                                Service = MainWindow.DataBase.Serves.Where(x => x.ID == item.ID_servese).First().Name,
+                                Client = MainWindow.DataBase.Client.Where(x => x.ID == item.ID_Client).First().Name,
+                                Workers = workers.Remove(workers.Length - 2),
+                                Cost = item.Cost
+                            });
+                        }
+
+                        DataGrid.ItemsSource = orders;
+
+                        if (MainWindow.DataBase.Acc.Where(x => x.ID == ID).Select(x => x.Order).ToArray()[0] == (int)DB.Acsess.Read)
+                            DataGrid.IsReadOnly = true;
+                        else DataGrid.IsReadOnly = false;
+                        break;
+                    }
 
                 case "Workers":
-                    DataGrid.ItemsSource = MainWindow.DataBase.Special.Select(x => x).ToList();
-                    if (MainWindow.DataBase.Acc.Where(x => x.ID == ID).Select(x => x.Special).ToArray()[0] == (int)DB.Acsess.Read)
-                        DataGrid.IsReadOnly = true;
-                    else DataGrid.IsReadOnly = false;
-                    break;
+                    {
+                        var sourse = MainWindow.DataBase.Special.Select(x => x).ToList();
+                        var workers = new ObservableCollection<TableWorker>();
+
+                        foreach (var item in sourse)
+                            workers.Add(new TableWorker()
+                            {
+                                ID = item.ID,
+                                Birthday = item.Birthday,
+                                Name = item.Name,
+                                Expiriance = item.Expiriance,
+                                Job = MainWindow.DataBase.job.Where(x => x.ID == item.ID_job).First().Name_of_job
+                            });
+
+                        DataGrid.ItemsSource = workers;
+
+                        if (MainWindow.DataBase.Acc.Where(x => x.ID == ID).Select(x => x.Special).ToArray()[0] == (int)DB.Acsess.Read)
+                            DataGrid.IsReadOnly = true;
+                        else DataGrid.IsReadOnly = false;
+                        break;
+                    }
 
                 case "Servises":
-                    DataGrid.ItemsSource = MainWindow.DataBase.Serves.Select(x => x).ToList();
-                    if (MainWindow.DataBase.Acc.Where(x => x.ID == ID).Select(x => x.Serves).ToArray()[0] == (int)DB.Acsess.Read)
-                        DataGrid.IsReadOnly = true;
-                    else DataGrid.IsReadOnly = false;
-                    break;
+                    {
+                        var sourse = MainWindow.DataBase.Serves.Select(x => x).ToList();
+                        var services = new ObservableCollection<TableService>();
+
+                        foreach (var item in sourse)
+                            services.Add(new TableService()
+                            {
+                                ID = item.ID,
+                                Name = item.Name,
+                                Time = item.Time_to_done,
+                                Job = MainWindow.DataBase.job.Where(x => x.ID == item.ID_job).First().Name_of_job,
+                                Cost = item.Cost
+                            });
+
+                        DataGrid.ItemsSource = services;
+
+                        if (MainWindow.DataBase.Acc.Where(x => x.ID == ID).Select(x => x.Serves).ToArray()[0] == (int)DB.Acsess.Read)
+                            DataGrid.IsReadOnly = true;
+                        else DataGrid.IsReadOnly = false;
+                        break;
+                    }
 
                 case "Jobs":
                     DataGrid.ItemsSource = MainWindow.DataBase.job.Select(x => x).ToList();
@@ -102,43 +195,80 @@ namespace kurs
                     break;
 
                 case "Orders":
-                    int idServes = MainWindow.DataBase.Serves.Max(x => x.ID);
-                    e.NewItem = new Order()
                     {
-                        ID = MainWindow.DataBase.Order.Max(x => x.ID) + 1,
-                        Cost = MainWindow.DataBase.Serves.Where(x => x.ID == idServes).Select(x => x.Cost).ToArray()[0],
-                        Total_time = MainWindow.DataBase.Serves.Where(x => x.ID == idServes).Select(x => x.Time_to_done).ToArray()[0],
-                        Order_date = DateTime.Now,
-                        ID_Client = MainWindow.DataBase.Client.Max(x => x.ID),
-                        ID_servese = idServes,
-                        ID_Special = Convert.ToString(MainWindow.DataBase.Special.Max(x => x.ID))
-                    };
-                    MainWindow.DataBase.Order.Add((Order)e.NewItem);
-                    break;
+                        int idServes = MainWindow.DataBase.Serves.Max(x => x.ID);
+                        var temp = new Order()
+                        {
+                            ID = MainWindow.DataBase.Order.Max(x => x.ID) + 1,
+                            Cost = MainWindow.DataBase.Serves.Where(x => x.ID == idServes).Select(x => x.Cost).ToArray()[0],
+                            Total_time = MainWindow.DataBase.Serves.Where(x => x.ID == idServes).Select(x => x.Time_to_done).ToArray()[0],
+                            Order_date = DateTime.Now,
+                            ID_Client = MainWindow.DataBase.Client.Max(x => x.ID),
+                            ID_servese = idServes,
+                            ID_Special = Convert.ToString(MainWindow.DataBase.Special.Max(x => x.ID))
+                        };
+
+                        e.NewItem = new TableOrder()
+                        {
+                            ID = temp.ID,
+                            Cost = temp.Cost,
+                            Finish = temp.Order_date.AddDays(temp.Total_time),
+                            Client = MainWindow.DataBase.Client.Where(x => x.ID == temp.ID_Client).First().Name,
+                            Service = MainWindow.DataBase.Serves.Where(x => x.ID == temp.ID_servese).First().Name,
+                            Workers = MainWindow.DataBase.Special.Where(x => x.ID == Convert.ToInt32(temp.ID_Special)).First().Name
+                        };
+
+                        MainWindow.DataBase.Order.Add(temp);
+                        break;
+                    }
 
                 case "Workers":
-                    e.NewItem = new Special()
                     {
-                        ID = MainWindow.DataBase.Special.Max(x => x.ID) + 1,
-                        Birthday = DateTime.MinValue,
-                        ID_job = MainWindow.DataBase.job.Max(x => x.ID),
-                        Expiriance = 0,
-                        Name = "Example"
-                    };
-                    MainWindow.DataBase.Special.Add((Special)e.NewItem);
-                    break;
+                        var temp = new Special()
+                        {
+                            ID = MainWindow.DataBase.Special.Max(x => x.ID) + 1,
+                            Birthday = DateTime.MinValue,
+                            ID_job = MainWindow.DataBase.job.Max(x => x.ID),
+                            Expiriance = 0,
+                            Name = "Example"
+                        };
+
+                        e.NewItem = new TableWorker()
+                        {
+                            ID = temp.ID,
+                            Birthday = temp.Birthday,
+                            Expiriance = temp.Expiriance,
+                            Job = MainWindow.DataBase.job.Where(x => x.ID == temp.ID_job).First().Name_of_job,
+                            Name = temp.Name
+                        };
+
+                        MainWindow.DataBase.Special.Add(temp);
+                        break;
+                    }
 
                 case "Servises":
-                    e.NewItem = new Serves()
                     {
-                        ID = MainWindow.DataBase.Serves.Max(x => x.ID) + 1,
-                        Time_to_done = 0,
-                        Cost = 0,
-                        Name = "Example",
-                        ID_job = MainWindow.DataBase.job.Max(x => x.ID)
-                    };
-                    MainWindow.DataBase.Serves.Add((Serves)e.NewItem);
-                    break;
+                        var temp = new Serves()
+                        {
+                            ID = MainWindow.DataBase.Serves.Max(x => x.ID) + 1,
+                            Time_to_done = 0,
+                            Cost = 0,
+                            Name = "Example",
+                            ID_job = MainWindow.DataBase.job.Max(x => x.ID)
+                        };
+
+                        e.NewItem = new TableService()
+                        {
+                            ID = temp.ID,
+                            Name = temp.Name,
+                            Cost = temp.Cost,
+                            Time = temp.Time_to_done,
+                            Job = MainWindow.DataBase.job.Where(x => x.ID == temp.ID_job).First().Name_of_job
+                        };
+
+                        MainWindow.DataBase.Serves.Add(temp);
+                        break;
+                    }
 
                 case "Jobs":
                     e.NewItem = new job()
@@ -162,16 +292,25 @@ namespace kurs
                     break;
 
                 case "Orders":
-                    MainWindow.DataBase.Order.Remove((Order)deletItem);
-                    break;
+                    {
+                        var temp = MainWindow.DataBase.Order.Where(x => x.ID == ((TableOrder)deletItem).ID).First();
+                        MainWindow.DataBase.Order.Remove(temp);
+                        break;
+                    }
 
                 case "Workers":
-                    MainWindow.DataBase.Special.Remove((Special)deletItem);
-                    break;
+                    {
+                        var temp = MainWindow.DataBase.Special.Where(x => x.ID == ((TableWorker)deletItem).ID).First();
+                        MainWindow.DataBase.Special.Remove(temp);
+                        break;
+                    }
 
                 case "Servises":
-                    MainWindow.DataBase.Serves.Remove((Serves)deletItem);
-                    break;
+                    {
+                        var temp = MainWindow.DataBase.Serves.Where(x => x.ID == ((TableService)deletItem).ID).First();
+                        MainWindow.DataBase.Serves.Remove(temp);
+                        break;
+                    }
 
                 case "Jobs":
                     MainWindow.DataBase.job.Remove((job)deletItem);
@@ -196,6 +335,46 @@ namespace kurs
                 window = new AccountsWindow();
                 window.Closing += (o, e) => window = null;
                 window.Show();
+            }
+        }
+
+        public static DataTable ToDataTable<T>(List<T> items)
+        {
+            DataTable dataTable = new DataTable(typeof(T).Name);
+
+            PropertyInfo[] Props = typeof(T).GetProperties(BindingFlags.Public | BindingFlags.Instance);
+            foreach (PropertyInfo prop in Props)
+            {
+                var type = (prop.PropertyType.IsGenericType && prop.PropertyType.GetGenericTypeDefinition() == typeof(Nullable<>) ? Nullable.GetUnderlyingType(prop.PropertyType) : prop.PropertyType);
+                dataTable.Columns.Add(prop.Name, type);
+            }
+
+            foreach (T item in items)
+            {
+                var values = new List<object>();
+                foreach(var temp in Props)
+                    values.Add(temp.GetValue(item, null));
+
+                dataTable.Rows.Add(values);
+            }
+            
+            return dataTable;
+        }
+
+        private void Button_Click_3(object sender, RoutedEventArgs e)
+        {
+            SaveFileDialog saveFileDialog = new SaveFileDialog();
+            saveFileDialog.ShowDialog();
+
+            List<Order> data = MainWindow.DataBase.Order.ToList();
+            DataTable table = ToDataTable(data);
+
+            FileInfo filePath = new FileInfo(saveFileDialog.FileName);
+            using (var excelPack = new ExcelPackage(filePath))
+            {
+                var ws = excelPack.Workbook.Worksheets.Add("Order");
+                ws.Cells.LoadFromDataTable(table, true, OfficeOpenXml.Table.TableStyles.Light8);
+                excelPack.Save();
             }
         }
     }
