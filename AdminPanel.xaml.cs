@@ -373,7 +373,8 @@ namespace kurs
             try
             {
                 SaveFileDialog saveFileDialog = new SaveFileDialog();
-                saveFileDialog.Filter = "Excel table|.xlsx";
+                saveFileDialog.Filter = "Excel table|*.xlsx";
+                saveFileDialog.FileName = "Report.xlsx";
                 saveFileDialog.ShowDialog();
 
                 FileInfo filePath = new FileInfo(saveFileDialog.FileName);
@@ -430,7 +431,7 @@ namespace kurs
                     (ToDataTable(orders), "Order"),
                     (ToDataTable(MainWindow.DataBase.Client.ToList()), "Client"),
                     (ToDataTable(MainWindow.DataBase.job.ToList()), "Job"),
-                    (ToDataTable(services), "Sevice"),
+                    (ToDataTable(services), "Service"),
                     (ToDataTable(workers), "Workers")
                 };
 
@@ -440,6 +441,37 @@ namespace kurs
                     {
                         var ws = excelPack.Workbook.Worksheets.Add(item.Item2);
                         ws.Cells.LoadFromDataTable(item.Item1, true, OfficeOpenXml.Table.TableStyles.Light8);
+                        switch(item.Item2)
+                        {
+                            case "Order":
+                                {
+                                    for (int i = 2; i <= 5; i++) ws.Column(i).Width = 15;
+                                    break;
+                                }
+                            case "Client":
+                                {
+                                    for (int i = 2; i < 5;i++) ws.Column(i).Width = 15;
+                                    break;
+                                }
+                            case "Job":
+                                {
+                                    ws.Column(2).Width = 15;
+                                    break;
+                                }
+                            case "Service":
+                                {
+                                    ws.Column(2).Width = 15;
+                                    ws.Column(4).Width = 15;
+                                    break;
+                                }
+                            case "Workers":
+                                {
+                                    ws.Column(2).Width = 15;
+                                    ws.Column(3).Width = 15;
+                                    ws.Column(5).Width = 15;
+                                    break;
+                                }
+                        }
                     }
                     excelPack.Save();
                 }
