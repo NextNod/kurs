@@ -1,6 +1,5 @@
 ﻿using MaterialDesignThemes.Wpf;
 using Microsoft.Win32;
-using Newtonsoft.Json;
 using OfficeOpenXml;
 using System;
 using System.Collections.Generic;
@@ -15,7 +14,7 @@ namespace kurs
 {
     public partial class AdminPanel : Window
     {
-        class TableOrder 
+        class TableOrder
         {
             public int ID { set; get; }
             public DateTime Finish { set; get; }
@@ -23,10 +22,10 @@ namespace kurs
             public string Client { set; get; }
             public string Workers { set; get; }
             public double Cost { set; get; }
-            
+
         }
 
-        class TableWorker 
+        class TableWorker
         {
             public int ID { set; get; }
             public string Name { set; get; }
@@ -35,7 +34,7 @@ namespace kurs
             public string Job { set; get; }
         }
 
-        class TableService 
+        class TableService
         {
             public int ID { set; get; }
             public string Name { set; get; }
@@ -43,7 +42,7 @@ namespace kurs
             public string Job { set; get; }
             public double Cost { set; get; }
         }
-        
+
         private readonly string[] allTables = new string[] { "Clients", "Orders", "Workers", "Jobs", "Servises" };
         private ObservableCollection<string> tables;
         private int ID;
@@ -346,36 +345,108 @@ namespace kurs
             foreach (PropertyInfo prop in Props)
             {
                 var type = (prop.PropertyType.IsGenericType && prop.PropertyType.GetGenericTypeDefinition() == typeof(Nullable<>) ? Nullable.GetUnderlyingType(prop.PropertyType) : prop.PropertyType);
-                dataTable.Columns.Add(prop.Name, type);
+                if (type.FullName == "System.DateTime")
+                    dataTable.Columns.Add(prop.Name, typeof(string));
+                else
+                    dataTable.Columns.Add(prop.Name, type);
             }
 
             foreach (T item in items)
             {
                 var values = new List<object>();
-                foreach(var temp in Props)
-                    values.Add(temp.GetValue(item, null));
+                foreach (var temp in Props)
+                {
+                    if(temp.PropertyType.FullName == "System.DateTime")
+                        values.Add(((DateTime)temp.GetValue(item, null)).ToShortDateString());
+                    else
+                        values.Add(temp.GetValue(item, null));
+                }
 
-                dataTable.Rows.Add(values);
+                dataTable.Rows.Add(values.ToArray());
             }
-            
+
             return dataTable;
         }
 
         private void Button_Click_3(object sender, RoutedEventArgs e)
         {
-            SaveFileDialog saveFileDialog = new SaveFileDialog();
-            saveFileDialog.ShowDialog();
-
-            List<Order> data = MainWindow.DataBase.Order.ToList();
-            DataTable table = ToDataTable(data);
-
-            FileInfo filePath = new FileInfo(saveFileDialog.FileName);
-            using (var excelPack = new ExcelPackage(filePath))
+            try
             {
-                var ws = excelPack.Workbook.Worksheets.Add("Order");
-                ws.Cells.LoadFromDataTable(table, true, OfficeOpenXml.Table.TableStyles.Light8);
-                excelPack.Save();
+                SaveFileDialog saveFileDialog = new SaveFileDialog();
+                saveFileDialog.Filter = "Excel table|.xlsx";
+                saveFileDialog.ShowDialog();
+
+                FileInfo filePath = new FileInfo(saveFileDialog.FileName);
+
+                var serviceSourse = MainWindow.DataBase.Serves.ToList();
+                var services = new List<TableService>();
+
+                foreach (var item in serviceSourse)
+                    services.Add(new TableService()
+                    {
+                        ID = item.ID,
+                        Name = item.Name,
+                        Time = item.Time_to_done,
+                        Job = MainWindow.DataBase.job.Where(x => x.ID == item.ID_job).First().Name_of_job,
+                        Cost = item.Cost
+                    });
+
+                var workersSourse = MainWindow.DataBase.Special.Select(x => x).ToList();
+                var workers = new List<TableWorker>();
+
+                foreach (var item in workersSourse)
+                    workers.Add(new TableWorker()
+                    {
+                        ID = item.ID,
+                        Birthday = item.Birthday,
+                        Name = item.Name,
+                        Expiriance = item.Expiriance,
+                        Job = MainWindow.DataBase.job.Where(x => x.ID == item.ID_job).First().Name_of_job
+                    });
+
+                var orderSourse = MainWindow.DataBase.Order.ToList();
+                var orders = new List<TableOrder>();
+
+                foreach (var item in orderSourse)
+                {
+                    string worker = "";
+                    var temp = item.ID_Special.Split(' ');
+
+                    for (int i = 0; i < temp.Length - 1; i++)
+                        worker += MainWindow.DataBase.Special.Where(x => x.ID == Convert.ToInt32(temp[i])).First().Name + ", ";
+
+                    orders.Add(new TableOrder()
+                    {
+                        ID = item.ID,
+                        Finish = item.Order_date.AddDays(item.Total_time),
+                        Service = MainWindow.DataBase.Serves.Where(x => x.ID == item.ID_servese).First().Name,
+                        Client = MainWindow.DataBase.Client.Where(x => x.ID == item.ID_Client).First().Name,
+                        Workers = worker.Remove(worker.Length - 2),
+                        Cost = item.Cost
+                    });
+                }
+
+                List<(DataTable, string)> vars = new List<(DataTable, string)> {
+                    (ToDataTable(orders), "Order"),
+                    (ToDataTable(MainWindow.DataBase.Client.ToList()), "Client"),
+                    (ToDataTable(MainWindow.DataBase.job.ToList()), "Job"),
+                    (ToDataTable(services), "Sevice"),
+                    (ToDataTable(workers), "Workers")
+                };
+
+                using (var excelPack = new ExcelPackage(filePath))
+                {
+                    foreach (var item in vars)
+                    {
+                        var ws = excelPack.Workbook.Worksheets.Add(item.Item2);
+                        ws.Cells.LoadFromDataTable(item.Item1, true, OfficeOpenXml.Table.TableStyles.Light8);
+                    }
+                    excelPack.Save();
+                }
+
+                SnackAdmin.MessageQueue.Enqueue("Export sucsecc!");
             }
+            catch { }
         }
     }
 }
