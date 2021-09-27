@@ -26,6 +26,7 @@ namespace kurs
         public ClientWindow()
         {
             InitializeComponent();
+            MainWindow.CheckDate();
             FieldForPages.Source = pages[pageIndex];
             List<string> list = new string[] { "Personal data", "Type of order", "Finish" }.ToList();
             StepBar.ItemsSource = list;

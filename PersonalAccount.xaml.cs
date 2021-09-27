@@ -227,19 +227,21 @@ namespace kurs
                     Filter = "Excel table|*.xlsx",
                     FileName = "Report.xlsx"
                 };
-                saveFileDialog.ShowDialog();
-
-                FileInfo filePath = new(saveFileDialog.FileName);
-
-                using (var excelPack = new ExcelPackage(filePath))
+                saveFileDialog.FileOk += (o, ee) => 
                 {
-                    var ws = excelPack.Workbook.Worksheets.Add("Orders");
-                    ws.Cells.LoadFromDataTable(AdminPanel.ToDataTable(listGrid.ToList()), true, OfficeOpenXml.Table.TableStyles.Light8);
-                    for (int i = 1; i < 5; i++) ws.Column(i).Width = 15;
-                    excelPack.Save();
-                }
+                    FileInfo filePath = new(saveFileDialog.FileName);
 
-                snackbar.MessageQueue.Enqueue("The data was successfully exported!");
+                    using (var excelPack = new ExcelPackage(filePath))
+                    {
+                        var ws = excelPack.Workbook.Worksheets.Add("Orders");
+                        ws.Cells.LoadFromDataTable(AdminPanel.ToDataTable(listGrid.ToList()), true, OfficeOpenXml.Table.TableStyles.Light8);
+                        for (int i = 1; i < 5; i++) ws.Column(i).Width = 15;
+                        excelPack.Save();
+                    }
+
+                    snackbar.MessageQueue.Enqueue("The data was successfully exported!");
+                };
+                saveFileDialog.ShowDialog();
             }
             else {
                 snackbar.MessageQueue.Enqueue("No data to export!");

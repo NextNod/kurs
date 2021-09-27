@@ -51,6 +51,7 @@ namespace kurs
         public AdminPanel(int ID)
         {
             InitializeComponent();
+            MainWindow.CheckDate();
             this.ID = ID;
             tables = new ObservableCollection<string>();
             SnackAdmin.MessageQueue = new SnackbarMessageQueue(TimeSpan.FromMilliseconds(4000));
@@ -372,113 +373,116 @@ namespace kurs
         {
             try
             {
-                SaveFileDialog saveFileDialog = new() {
+                SaveFileDialog saveFileDialog = new() 
+                {
                     Filter = "Excel table|*.xlsx",
                     FileName = "Report.xlsx"
                 };
-                saveFileDialog.ShowDialog();
-
-                FileInfo filePath = new(saveFileDialog.FileName);
-
-                var serviceSourse = MainWindow.DataBase.Serves.ToList();
-                var services = new List<TableService>();
-
-                foreach (var item in serviceSourse)
-                    services.Add(new TableService()
-                    {
-                        ID = item.ID,
-                        Name = item.Name,
-                        Time = item.Time_to_done,
-                        Job = MainWindow.DataBase.job.Where(x => x.ID == item.ID_job).First().Name_of_job,
-                        Cost = item.Cost
-                    });
-
-                var workersSourse = MainWindow.DataBase.Special.Select(x => x).ToList();
-                var workers = new List<TableWorker>();
-
-                foreach (var item in workersSourse)
-                    workers.Add(new TableWorker()
-                    {
-                        ID = item.ID,
-                        Birthday = item.Birthday,
-                        Name = item.Name,
-                        Expiriance = item.Expiriance,
-                        Job = MainWindow.DataBase.job.Where(x => x.ID == item.ID_job).First().Name_of_job
-                    });
-
-                var orderSourse = MainWindow.DataBase.Order.ToList();
-                var orders = new List<TableOrder>();
-
-                foreach (var item in orderSourse)
+                saveFileDialog.FileOk += (o, ee) => 
                 {
-                    string worker = "";
-                    var temp = item.ID_Special.Split(' ');
+                    FileInfo filePath = new(saveFileDialog.FileName);
 
-                    for (int i = 0; i < temp.Length - 1; i++)
-                        worker += MainWindow.DataBase.Special.Where(x => x.ID == Convert.ToInt32(temp[i])).First().Name + ", ";
+                    var serviceSourse = MainWindow.DataBase.Serves.ToList();
+                    var services = new List<TableService>();
 
-                    orders.Add(new TableOrder()
-                    {
-                        ID = item.ID,
-                        Finish = item.Order_date.AddDays(item.Total_time),
-                        Service = MainWindow.DataBase.Serves.Where(x => x.ID == item.ID_servese).First().Name,
-                        Client = MainWindow.DataBase.Client.Where(x => x.ID == item.ID_Client).First().Name,
-                        Workers = worker.Remove(worker.Length - 2),
-                        Cost = item.Cost
-                    });
-                }
-
-                List<(DataTable, string)> vars = new()
-                {
-                    (ToDataTable(orders), "Order"),
-                    (ToDataTable(MainWindow.DataBase.Client.ToList()), "Client"),
-                    (ToDataTable(MainWindow.DataBase.job.ToList()), "Job"),
-                    (ToDataTable(services), "Service"),
-                    (ToDataTable(workers), "Workers")
-                };
-
-                using (var excelPack = new ExcelPackage(filePath))
-                {
-                    foreach (var item in vars)
-                    {
-                        var ws = excelPack.Workbook.Worksheets.Add(item.Item2);
-                        ws.Cells.LoadFromDataTable(item.Item1, true, OfficeOpenXml.Table.TableStyles.Light8);
-                        switch(item.Item2)
+                    foreach (var item in serviceSourse)
+                        services.Add(new TableService()
                         {
-                            case "Order":
-                                {
-                                    for (int i = 2; i <= 5; i++) ws.Column(i).Width = 15;
-                                    break;
-                                }
-                            case "Client":
-                                {
-                                    for (int i = 2; i < 5;i++) ws.Column(i).Width = 15;
-                                    break;
-                                }
-                            case "Job":
-                                {
-                                    ws.Column(2).Width = 15;
-                                    break;
-                                }
-                            case "Service":
-                                {
-                                    ws.Column(2).Width = 15;
-                                    ws.Column(4).Width = 15;
-                                    break;
-                                }
-                            case "Workers":
-                                {
-                                    ws.Column(2).Width = 15;
-                                    ws.Column(3).Width = 15;
-                                    ws.Column(5).Width = 15;
-                                    break;
-                                }
-                        }
-                    }
-                    excelPack.Save();
-                }
+                            ID = item.ID,
+                            Name = item.Name,
+                            Time = item.Time_to_done,
+                            Job = MainWindow.DataBase.job.Where(x => x.ID == item.ID_job).First().Name_of_job,
+                            Cost = item.Cost
+                        });
 
-                SnackAdmin.MessageQueue.Enqueue("Export sucsecc!");
+                    var workersSourse = MainWindow.DataBase.Special.Select(x => x).ToList();
+                    var workers = new List<TableWorker>();
+
+                    foreach (var item in workersSourse)
+                        workers.Add(new TableWorker()
+                        {
+                            ID = item.ID,
+                            Birthday = item.Birthday,
+                            Name = item.Name,
+                            Expiriance = item.Expiriance,
+                            Job = MainWindow.DataBase.job.Where(x => x.ID == item.ID_job).First().Name_of_job
+                        });
+
+                    var orderSourse = MainWindow.DataBase.Order.ToList();
+                    var orders = new List<TableOrder>();
+
+                    foreach (var item in orderSourse)
+                    {
+                        string worker = "";
+                        var temp = item.ID_Special.Split(' ');
+
+                        for (int i = 0; i < temp.Length - 1; i++)
+                            worker += MainWindow.DataBase.Special.Where(x => x.ID == Convert.ToInt32(temp[i])).First().Name + ", ";
+
+                        orders.Add(new TableOrder()
+                        {
+                            ID = item.ID,
+                            Finish = item.Order_date.AddDays(item.Total_time),
+                            Service = MainWindow.DataBase.Serves.Where(x => x.ID == item.ID_servese).First().Name,
+                            Client = MainWindow.DataBase.Client.Where(x => x.ID == item.ID_Client).First().Name,
+                            Workers = worker.Remove(worker.Length - 2),
+                            Cost = item.Cost
+                        });
+                    }
+
+                    List<(DataTable, string)> vars = new()
+                    {
+                        (ToDataTable(orders), "Order"),
+                        (ToDataTable(MainWindow.DataBase.Client.ToList()), "Client"),
+                        (ToDataTable(MainWindow.DataBase.job.ToList()), "Job"),
+                        (ToDataTable(services), "Service"),
+                        (ToDataTable(workers), "Workers")
+                    };
+
+                    using (var excelPack = new ExcelPackage(filePath))
+                    {
+                        foreach (var item in vars)
+                        {
+                            var ws = excelPack.Workbook.Worksheets.Add(item.Item2);
+                            ws.Cells.LoadFromDataTable(item.Item1, true, OfficeOpenXml.Table.TableStyles.Light8);
+                            switch (item.Item2)
+                            {
+                                case "Order":
+                                    {
+                                        for (int i = 2; i <= 5; i++) ws.Column(i).Width = 15;
+                                        break;
+                                    }
+                                case "Client":
+                                    {
+                                        for (int i = 2; i < 5; i++) ws.Column(i).Width = 15;
+                                        break;
+                                    }
+                                case "Job":
+                                    {
+                                        ws.Column(2).Width = 15;
+                                        break;
+                                    }
+                                case "Service":
+                                    {
+                                        ws.Column(2).Width = 15;
+                                        ws.Column(4).Width = 15;
+                                        break;
+                                    }
+                                case "Workers":
+                                    {
+                                        ws.Column(2).Width = 15;
+                                        ws.Column(3).Width = 15;
+                                        ws.Column(5).Width = 15;
+                                        break;
+                                    }
+                            }
+                        }
+                        excelPack.Save();
+                    }
+
+                    SnackAdmin.MessageQueue.Enqueue("Export sucsecc!");
+                };
+                saveFileDialog.ShowDialog();
             }
             catch { }
         }

@@ -11,14 +11,22 @@ namespace kurs
     /// 
     public partial class MainWindow : Window
     {
-        public static DB DataBase = new();
+        public static DB DataBase { get; } = new();
         public static Snackbar? MainSnackbar { set; get; }
         public MainWindow()
         {
             InitializeComponent();
+            CheckDate();
             MainSnackbar = MainSnack;
             Login.Focus();
             MainSnack.MessageQueue = new SnackbarMessageQueue(TimeSpan.FromMilliseconds(4000));
+        }
+
+        public static void CheckDate() 
+        {
+            DataBase.Order.Where(x => x.Order_date.AddDays(x.Total_time) < DateTime.Now).ToList().ForEach(x => {
+                DataBase.Order.Remove(x);
+            });
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)

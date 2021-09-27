@@ -19,6 +19,7 @@ namespace kurs
         public AccountsWindow()
         {
             InitializeComponent();
+            MainWindow.CheckDate();
             AccountSnack.MessageQueue = new SnackbarMessageQueue(TimeSpan.FromMilliseconds(4000));
 
             Client.ItemsSource = acsecc;
