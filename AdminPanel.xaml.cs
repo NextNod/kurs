@@ -45,8 +45,8 @@ namespace kurs
 
         private readonly string[] allTables = new string[] { "Clients", "Orders", "Workers", "Jobs", "Servises" };
         private AccountsWindow? window;
-        private ObservableCollection<string> tables;
-        private int ID;
+        private readonly ObservableCollection<string> tables;
+        private readonly int ID;
 
         public AdminPanel(int ID)
         {
@@ -339,7 +339,7 @@ namespace kurs
 
         public static DataTable ToDataTable<T>(List<T> items)
         {
-            DataTable dataTable = new DataTable(typeof(T).Name);
+            DataTable dataTable = new(typeof(T).Name);
 
             PropertyInfo[] Props = typeof(T).GetProperties(BindingFlags.Public | BindingFlags.Instance);
             foreach (PropertyInfo prop in Props)
@@ -372,12 +372,13 @@ namespace kurs
         {
             try
             {
-                SaveFileDialog saveFileDialog = new SaveFileDialog();
-                saveFileDialog.Filter = "Excel table|*.xlsx";
-                saveFileDialog.FileName = "Report.xlsx";
+                SaveFileDialog saveFileDialog = new() {
+                    Filter = "Excel table|*.xlsx",
+                    FileName = "Report.xlsx"
+                };
                 saveFileDialog.ShowDialog();
 
-                FileInfo filePath = new FileInfo(saveFileDialog.FileName);
+                FileInfo filePath = new(saveFileDialog.FileName);
 
                 var serviceSourse = MainWindow.DataBase.Serves.ToList();
                 var services = new List<TableService>();
@@ -427,7 +428,8 @@ namespace kurs
                     });
                 }
 
-                List<(DataTable, string)> vars = new List<(DataTable, string)> {
+                List<(DataTable, string)> vars = new()
+                {
                     (ToDataTable(orders), "Order"),
                     (ToDataTable(MainWindow.DataBase.Client.ToList()), "Client"),
                     (ToDataTable(MainWindow.DataBase.job.ToList()), "Job"),

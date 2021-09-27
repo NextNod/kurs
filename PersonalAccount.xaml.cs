@@ -14,12 +14,11 @@ namespace kurs
 {
     public partial class PersonalAccount : Window
     {
-        Acc account;
-        Order selectedOrder = new Order();
-        Client client;
-        ObservableCollection<OrderObject> listGrid;
-        ObservableCollection<string> listWorkers;
-        ObservableCollection<string> listBoxObject;
+        Order selectedOrder = new();
+        readonly Client client;
+        private readonly ObservableCollection<OrderObject> listGrid;
+        private readonly ObservableCollection<string> listWorkers;
+        private readonly ObservableCollection<string> listBoxObject;
         int selectedIndex = -1;
         readonly List<string> services = MainWindow.DataBase.Serves.Select(x => x.Name).ToList();
 
@@ -34,7 +33,6 @@ namespace kurs
         public PersonalAccount(Acc acc)
         {
             InitializeComponent();
-            account = acc;
             string? name = acc.Login;
             client = MainWindow.DataBase.Client.Where(x => x.Name == name).First();
             Label.Content = $"Welcome back {name}!";
@@ -51,7 +49,7 @@ namespace kurs
                     Type = MainWindow.DataBase.Serves.Where(x => x.ID == item.ID_servese).First().Name,
                     Cost = item.Cost,
                     Finish = item.Order_date.AddDays(item.Total_time),
-                    Workers = item.ID_Special.Split(' ').Count() - 1
+                    Workers = item.ID_Special.Split(' ').Length - 1
                 });
             }
 
@@ -74,7 +72,7 @@ namespace kurs
                 for (int i = 0; i < workers.Length - 1; i++)
                     listBoxObject.Add(MainWindow.DataBase.Special.Where(x => x.ID == Convert.ToInt32(workers[i])).First().Name);
 
-                for (int i = 0; i < services.Count(); i++)
+                for (int i = 0; i < services.Count; i++)
                 {
                     if (selected.Type == services[i])
                     {
@@ -160,7 +158,7 @@ namespace kurs
                     Type = MainWindow.DataBase.Serves.Where(x => x.ID == item.ID_servese).First().Name,
                     Cost = item.Cost,
                     Finish = item.Order_date.AddDays(item.Total_time),
-                    Workers = item.ID_Special.Split(' ').Count() - 1
+                    Workers = item.ID_Special.Split(' ').Length - 1
                 });
             }
 
@@ -207,7 +205,7 @@ namespace kurs
                     Type = MainWindow.DataBase.Serves.Where(x => x.ID == item.ID_servese).First().Name,
                     Cost = item.Cost,
                     Finish = item.Order_date.AddDays(item.Total_time),
-                    Workers = item.ID_Special.Split(' ').Count() - 1
+                    Workers = item.ID_Special.Split(' ').Length - 1
                 });
             }
 
@@ -224,12 +222,14 @@ namespace kurs
         {
             if (listGrid.Count != 0)
             {
-                SaveFileDialog saveFileDialog = new SaveFileDialog();
-                saveFileDialog.Filter = "Excel table|*.xlsx";
-                saveFileDialog.FileName = "Report.xlsx";
+                SaveFileDialog saveFileDialog = new()
+                {
+                    Filter = "Excel table|*.xlsx",
+                    FileName = "Report.xlsx"
+                };
                 saveFileDialog.ShowDialog();
 
-                FileInfo filePath = new FileInfo(saveFileDialog.FileName);
+                FileInfo filePath = new(saveFileDialog.FileName);
 
                 using (var excelPack = new ExcelPackage(filePath))
                 {

@@ -13,8 +13,8 @@ namespace kurs
     /// </summary>
     public partial class AccountsWindow : Window
     {
-        private readonly List<string> acsecc = new List<string>() { "Read", "Write & Read", "Denied" };
-        private ObservableCollection<string?> vs;
+        private readonly List<string> acsecc = new() { "Read", "Write & Read", "Denied" };
+        private readonly ObservableCollection<string?> vs;
 
         public AccountsWindow()
         {

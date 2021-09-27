@@ -11,7 +11,7 @@ namespace kurs
     /// 
     public partial class MainWindow : Window
     {
-        public static DB DataBase = new DB();
+        public static DB DataBase = new();
         public static Snackbar? MainSnackbar { set; get; }
         public MainWindow()
         {

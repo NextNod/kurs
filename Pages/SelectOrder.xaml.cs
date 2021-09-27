@@ -12,7 +12,7 @@ namespace kurs.Pages
     /// </summary>
     public partial class SelectOrder : Page
     {
-        private ObservableCollection<string> workersList;
+        private readonly ObservableCollection<string> workersList;
         private double time = 0, cost = 0;
         private string workerDiscription = "";
 
