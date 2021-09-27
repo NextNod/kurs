@@ -44,6 +44,7 @@ namespace kurs
         }
 
         private readonly string[] allTables = new string[] { "Clients", "Orders", "Workers", "Jobs", "Servises" };
+        private AccountsWindow? window;
         private ObservableCollection<string> tables;
         private int ID;
 
@@ -325,7 +326,6 @@ namespace kurs
             SnackAdmin.MessageQueue.Enqueue("Change saved!");
         }
 
-        AccountsWindow? window;
 
         private void Button_Click_2(object sender, RoutedEventArgs e)
         {

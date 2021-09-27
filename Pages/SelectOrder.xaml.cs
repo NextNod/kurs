@@ -31,13 +31,21 @@ namespace kurs.Pages
             Services.SelectionChanged += (o, e) =>
             {
                 var job = MainWindow.DataBase.Serves.Where(x => x.ID == Services.SelectedIndex).Select(x => x.ID_job).ToList();
-                var workers = new List<Special>(MainWindow.DataBase.Special.Where(x => x.ID_job == job[0]).AsEnumerable());
+                var workers = MainWindow.DataBase.Special.Where(x => x.ID_job == job[0]).ToList();
                 itemSourse.Clear();
 
                 onChangeText();
 
-                foreach (var worker in workers)
-                    itemSourse.Add(worker.Name);
+                var allWorkers = new List<int>();
+                var sourseWorkers = MainWindow.DataBase.Order.Select(x => x.ID_Special).ToList();
+                foreach (var item in sourseWorkers)
+                    foreach (var item2 in item.Split(' '))
+                        if (item2 != "")
+                            allWorkers.Add(Convert.ToInt32(item2));
+
+                foreach (var item in workers)
+                    if (!allWorkers.Contains(item.ID))
+                        itemSourse.Add(item.Name);
             };
 
             if(ClientWindow.Order != null) 

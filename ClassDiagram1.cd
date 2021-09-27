@@ -1,0 +1,157 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="kurs.Pages.FinishPage" BaseTypeListCollapsed="true">
+    <Position X="18.25" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Pages\FinishPage.xaml.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="kurs.Pages.NewClient" BaseTypeListCollapsed="true">
+    <Position X="13" Y="7" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Pages\NewClient.xaml.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="kurs.Pages.SelectOrder" BaseTypeListCollapsed="true">
+    <Position X="11.25" Y="4" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AgABAAAACAABAAAAABAAAgEAAAAQAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Pages\SelectOrder.xaml.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="kurs.AccountsWindow" BaseTypeListCollapsed="true">
+    <Position X="14.75" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAQAAAAAABAAAAAAAABAEAAAAACACAAAAACAAAAAA=</HashCode>
+      <FileName>AccountsWindow.xaml.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="kurs.AdminPanel" BaseTypeListCollapsed="true">
+    <Position X="16.5" Y="0.5" Width="1.5" />
+    <Compartments>
+      <Compartment Name="Nested Types" Collapsed="false" />
+    </Compartments>
+    <NestedTypes>
+      <Class Name="kurs.AdminPanel.TableOrder">
+        <TypeIdentifier>
+          <NewMemberFileName>AdminPanel.xaml.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Class>
+      <Class Name="kurs.AdminPanel.TableWorker">
+        <TypeIdentifier>
+          <NewMemberFileName>AdminPanel.xaml.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Class>
+      <Class Name="kurs.AdminPanel.TableService">
+        <TypeIdentifier>
+          <NewMemberFileName>AdminPanel.xaml.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Class>
+    </NestedTypes>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAQBgABAAAAAAAEEAAAAAkAIAAAACAAAACA=</HashCode>
+      <FileName>AdminPanel.xaml.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="kurs.ClientWindow" BaseTypeListCollapsed="true">
+    <Position X="11.25" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAEAAAAAAGAAAAAQAAAAAAEAAAAAAAAIAAAACAAAAAQ=</HashCode>
+      <FileName>ClientWindow.xaml.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="kurs.Order">
+    <Position X="18.25" Y="2.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAgAAABAEAAhAAAAAAAAIAAAAAAAAAEAA=</HashCode>
+      <FileName>DB.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="kurs.Serves">
+    <Position X="11.25" Y="7.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAQAAAAAAAgAAAABAAABQAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>DB.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="kurs.Special">
+    <Position X="14.75" Y="8.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAgAAAAFAAAAQAAAAIAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>DB.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="kurs.job">
+    <Position X="11.25" Y="9.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>IAAAAAAAAAAAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>DB.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="kurs.Acc">
+    <Position X="13" Y="8.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAEAACAAAAAAgBAAAAAAAAAAAAACAAACAAAQAgAAAAQ=</HashCode>
+      <FileName>DB.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="kurs.Client">
+    <Position X="14.75" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAACAAgAAAAAAAAAQAAAAAAAAAAAAAIAAAAAA=</HashCode>
+      <FileName>DB.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="kurs.DB">
+    <Position X="18.25" Y="4.75" Width="1.5" />
+    <Compartments>
+      <Compartment Name="Nested Types" Collapsed="false" />
+    </Compartments>
+    <NestedTypes>
+      <Enum Name="kurs.DB.Acsess">
+        <TypeIdentifier>
+          <NewMemberFileName>DB.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Enum>
+    </NestedTypes>
+    <TypeIdentifier>
+      <HashCode>AAEAACAAAQAAAAAAAAAAAAIAAAAAAAAAAAAAAgAAAEQ=</HashCode>
+      <FileName>DB.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="kurs.MainWindow" BaseTypeListCollapsed="true">
+    <Position X="14.75" Y="5.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAABgAAARAAEAAEAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>MainWindow.xaml.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="kurs.PersonalAccount" BaseTypeListCollapsed="true">
+    <Position X="13" Y="0.5" Width="1.5" />
+    <Compartments>
+      <Compartment Name="Nested Types" Collapsed="false" />
+    </Compartments>
+    <NestedTypes>
+      <Class Name="kurs.PersonalAccount.OrderObject">
+        <TypeIdentifier>
+          <NewMemberFileName>PersonalAccount.xaml.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Class>
+    </NestedTypes>
+    <TypeIdentifier>
+      <HashCode>BABAAAACAIAgAAAIAJAAAAEAAAAQgAAAAAAARIAAAAA=</HashCode>
+      <FileName>PersonalAccount.xaml.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

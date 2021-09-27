@@ -1,7 +1,11 @@
 ﻿using MaterialDesignThemes.Wpf;
+using Microsoft.Win32;
+using OfficeOpenXml;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Data;
+using System.IO;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -91,10 +95,18 @@ namespace kurs
             {
                 listWorkers.Clear();
                 int jobID = MainWindow.DataBase.Serves.Where(x => x.Name == (string)Service.SelectedItem).First().ID_job;
-                var workers = MainWindow.DataBase.Special.Where(x => x.ID_job == jobID).Select(x => x.Name).ToList();
+                var workers = MainWindow.DataBase.Special.Where(x => x.ID_job == jobID).ToList();
+
+                var allWorkers = new List<int>();
+                var sourseWorkers = MainWindow.DataBase.Order.Select(x => x.ID_Special).ToList();
+                foreach (var item in sourseWorkers)
+                    foreach (var item2 in item.Split(' '))
+                        if (item2 != "")
+                            allWorkers.Add(Convert.ToInt32(item2));
 
                 foreach (var item in workers)
-                    listWorkers.Add(item);
+                    if(!allWorkers.Contains(item.ID))
+                        listWorkers.Add(item.Name);
 
                 if (selectedIndex == DataGrid.SelectedIndex)
                     listBoxObject.Clear();
@@ -206,6 +218,32 @@ namespace kurs
             Service.SelectedIndex = -1;
 
             snackbar.MessageQueue.Enqueue("New order was added!");
+        }
+
+        private void Button_Click_1(object sender, RoutedEventArgs e)
+        {
+            if (listGrid.Count != 0)
+            {
+                SaveFileDialog saveFileDialog = new SaveFileDialog();
+                saveFileDialog.Filter = "Excel table|*.xlsx";
+                saveFileDialog.FileName = "Report.xlsx";
+                saveFileDialog.ShowDialog();
+
+                FileInfo filePath = new FileInfo(saveFileDialog.FileName);
+
+                using (var excelPack = new ExcelPackage(filePath))
+                {
+                    var ws = excelPack.Workbook.Worksheets.Add("Orders");
+                    ws.Cells.LoadFromDataTable(AdminPanel.ToDataTable(listGrid.ToList()), true, OfficeOpenXml.Table.TableStyles.Light8);
+                    for (int i = 1; i < 5; i++) ws.Column(i).Width = 15;
+                    excelPack.Save();
+                }
+
+                snackbar.MessageQueue.Enqueue("The data was successfully exported!");
+            }
+            else {
+                snackbar.MessageQueue.Enqueue("No data to export!");
+            }
         }
     }
 }
