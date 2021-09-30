@@ -284,41 +284,50 @@ namespace kurs
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            var deletItem = DataGrid.SelectedItem;
-
-            switch ((string)Tables.SelectedItem)
+            try
             {
-                case "Clients":
-                    MainWindow.DataBase.Client.Remove((Client)deletItem);
-                    break;
+                var deletItem = DataGrid.SelectedItem;
 
-                case "Orders":
-                    {
-                        var temp = MainWindow.DataBase.Order.Where(x => x.ID == ((TableOrder)deletItem).ID).First();
-                        MainWindow.DataBase.Order.Remove(temp);
+                switch ((string)Tables.SelectedItem)
+                {
+                    case "Clients":
+                        MainWindow.DataBase.Client.Remove((Client)deletItem);
                         break;
-                    }
 
-                case "Workers":
-                    {
-                        var temp = MainWindow.DataBase.Special.Where(x => x.ID == ((TableWorker)deletItem).ID).First();
-                        MainWindow.DataBase.Special.Remove(temp);
+                    case "Orders":
+                        {
+                            var temp = MainWindow.DataBase.Order.Where(x => x.ID == ((TableOrder)deletItem).ID).First();
+                            MainWindow.DataBase.Order.Remove(temp);
+                            break;
+                        }
+
+                    case "Workers":
+                        {
+                            var temp = MainWindow.DataBase.Special.Where(x => x.ID == ((TableWorker)deletItem).ID).First();
+                            MainWindow.DataBase.Special.Remove(temp);
+                            break;
+                        }
+
+                    case "Servises":
+                        {
+                            var temp = MainWindow.DataBase.Serves.Where(x => x.ID == ((TableService)deletItem).ID).First();
+                            MainWindow.DataBase.Serves.Remove(temp);
+                            break;
+                        }
+
+                    case "Jobs":
+                        MainWindow.DataBase.job.Remove((job)deletItem);
                         break;
-                    }
+                }
 
-                case "Servises":
-                    {
-                        var temp = MainWindow.DataBase.Serves.Where(x => x.ID == ((TableService)deletItem).ID).First();
-                        MainWindow.DataBase.Serves.Remove(temp);
-                        break;
-                    }
+                MainWindow.DataBase.SaveChanges();
 
-                case "Jobs":
-                    MainWindow.DataBase.job.Remove((job)deletItem);
-                    break;
+                TablesChanged(null, null);
             }
-
-            TablesChanged(null, null);
+            catch (InvalidOperationException ex) 
+            {
+                SnackAdmin.MessageQueue.Enqueue("Save new data, then you can delete that field");
+            }
         }
 
         private void Button_Click_1(object sender, RoutedEventArgs e)

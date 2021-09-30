@@ -1,5 +1,7 @@
 ﻿using MaterialDesignThemes.Wpf;
 using System;
+using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Windows;
 
@@ -88,6 +90,12 @@ namespace kurs
         {
             if (e.Key == System.Windows.Input.Key.Enter)
                 Button_Click(null, null);
+        }
+
+        private void Grid_KeyDown(object sender, System.Windows.Input.KeyEventArgs e)
+        {
+            if (e.Key == System.Windows.Input.Key.F1)
+                Process.Start(Directory.GetCurrentDirectory() + "\\help.chm");
         }
     }
 }

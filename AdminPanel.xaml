@@ -19,7 +19,7 @@
             </Grid.ColumnDefinitions>
             <StackPanel Margin="10" Orientation="Horizontal">
                 <ComboBox x:Name="Tables" HorizontalAlignment="Left" Width="200" Margin="0,0,10,0" SelectionChanged="TablesChanged"/>
-                <Button Content="Delete" Margin="0,0,10,0"/>
+                <Button Content="Delete" Margin="0,0,10,0" Click="Button_Click"/>
                 <Button Content="Save" Click="Button_Click_1"/>
                 <Button Content="Export" Click="Button_Click_3" Margin="10,0,0,0"/>
             </StackPanel>
